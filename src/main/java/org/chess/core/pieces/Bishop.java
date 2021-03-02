@@ -9,7 +9,7 @@ public class Bishop extends _Piece {
         long i = bishop & - bishop;
         while (i != 0) {
             int idx = numberOfTrailingZeros(i);
-            attackUtil(pseudoMoves, diagonalMoves(idx) & antiPlayerPieces, idx, 'd');
+            moveUtil(pseudoMoves, diagonalMoves(idx) & antiPlayerPieces, idx, 'd');
             bishop &= ~ i;
             i = bishop & - bishop;
         }

@@ -20,7 +20,7 @@ public class Knight extends _Piece {
             } else {
                 movement &= 0xfcfcfcfcfcfcfcfcL & antiPlayerPieces;
             }
-            attackUtil(PseudoMoves, movement, idx,'d');
+            moveUtil(PseudoMoves, movement, idx,'d');
             knight &= ~ i;
             i = knight & - knight;
         }

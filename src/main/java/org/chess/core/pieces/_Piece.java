@@ -10,55 +10,12 @@ import static org.chess.core.pieces.Pawn.possibleWP;
 import static org.chess.core.pieces.Queen.possibleQ;
 import static org.chess.core.pieces.Rook.possibleR;
 
-public class _Piece {
+public class _Piece extends _Masks{
 
     static long playerPieces;
     static long antiPlayerPieces;
     static long piecesMask;
     static long antiPiecesMask;
-
-    static long[] rankMask = {
-            0x00000000000000FFL, 0x000000000000FF00L, 0x0000000000FF0000L, 0x00000000FF000000L,
-            0x000000FF00000000L, 0x0000FF0000000000L, 0x00FF000000000000L, 0xFF00000000000000L
-    };
-
-    static long[] fileMask = {
-            0x0101010101010101L, 0x0202020202020202L, 0x0404040404040404L, 0x0808080808080808L,
-            0x1010101010101010L, 0x2020202020202020L, 0x4040404040404040L, 0x8080808080808080L
-    };
-
-    static long[] mainDiagMask = {
-            0x0000000000000001L, 0x0000000000000102L, 0x0000000000010204L, 0x0000000001020408L,
-            0x0000000102040810L, 0x0000010204081020L, 0x0001020408102040L, 0x0102040810204080L,
-            0x0204081020408000L, 0x0408102040800000L, 0x0810204080000000L, 0x1020408000000000L,
-            0x2040800000000000L, 0x4080000000000000L, 0x8000000000000000L
-    };
-
-    static long[] antiDiagMask = {
-            0x0000000000000080L, 0x0000000000008040L, 0x0000000000804020L, 0x0000000080402010L,
-            0x0000008040201008L, 0x0000804020100804L, 0x0080402010080402L, 0x8040201008040201L,
-            0x4020100804020100L, 0x2010080402010000L, 0x1008040201000000L, 0x0804020100000000L,
-            0x0402010000000000L, 0x0201000000000000L, 0x0100000000000000L
-    };
-
-    public static long[] piece = {
-            0x0000000000000001L, 0x0000000000000002L, 0x0000000000000004L, 0x0000000000000008L,
-            0x0000000000000010L, 0x0000000000000020L, 0x0000000000000040L, 0x0000000000000080L,
-            0x0000000000000100L, 0x0000000000000200L, 0x0000000000000400L, 0x0000000000000800L,
-            0x0000000000001000L, 0x0000000000002000L, 0x0000000000004000L, 0x0000000000008000L,
-            0x0000000000010000L, 0x0000000000020000L, 0x0000000000040000L, 0x0000000000080000L,
-            0x0000000000100000L, 0x0000000000200000L, 0x0000000000400000L, 0x0000000000800000L,
-            0x0000000001000000L, 0x0000000002000000L, 0x0000000004000000L, 0x0000000008000000L,
-            0x0000000010000000L, 0x0000000020000000L, 0x0000000040000000L, 0x0000000080000000L,
-            0x0000000100000000L, 0x0000000200000000L, 0x0000000400000000L, 0x0000000800000000L,
-            0x0000001000000000L, 0x0000002000000000L, 0x0000004000000000L, 0x0000008000000000L,
-            0x0000010000000000L, 0x0000020000000000L, 0x0000040000000000L, 0x0000080000000000L,
-            0x0000100000000000L, 0x0000200000000000L, 0x0000400000000000L, 0x0000800000000000L,
-            0x0001000000000000L, 0x0002000000000000L, 0x0004000000000000L, 0x0008000000000000L,
-            0x0010000000000000L, 0x0020000000000000L, 0x0040000000000000L, 0x0080000000000000L,
-            0x0100000000000000L, 0x0200000000000000L, 0x0400000000000000L, 0x0800000000000000L,
-            0x1000000000000000L, 0x2000000000000000L, 0x4000000000000000L, 0x8000000000000000L
-    };
 
     public static String getPseudoMoves(boolean white, long[] board) {
 
@@ -108,13 +65,13 @@ public class _Piece {
         return (movesDiagonal & mainDiagMask[(s / 8) + (s % 8)]) | (movesAntiDiagonal & antiDiagMask[(s / 8) + 7 - (s % 8)]);
     }
 
-    static void attackUtil(StringBuilder list, long movement, int utilIdx, char type) {
-        long j = movement & - movement;
-        while (j != 0) {
-            int idx = numberOfTrailingZeros(j);
+    static void moveUtil(StringBuilder list, long movement, int utilIdx, char type) {
+        long m = movement & - movement;
+        while (m != 0) {
+            int idx = numberOfTrailingZeros(m);
             list.append(utilIdx / 8).append(utilIdx % 8).append(idx / 8).append(idx % 8).append(type);
-            movement &= ~ j;
-            j = movement & - movement;
+            movement &= ~ m;
+            m = movement & - movement;
         }
     }
 
@@ -149,7 +106,7 @@ public class _Piece {
             knight = wKnight;
         }
 
-        long queenRook = queen | rook; // queen and rook
+        long queenRook = queen | rook; // queen orthogonal and rook
         i = queenRook & - queenRook;
         while (i != 0) {
             underAttack |= orthogonalMoves(numberOfTrailingZeros(i));
@@ -157,7 +114,7 @@ public class _Piece {
             i = queenRook & - queenRook;
         }
 
-        long queenBishop = queen | bishop; // queen and bishop
+        long queenBishop = queen | bishop; // queen diagonal and bishop
         i = queenBishop & - queenBishop;
         while (i != 0) {
             underAttack |= diagonalMoves(numberOfTrailingZeros(i));
@@ -185,18 +142,7 @@ public class _Piece {
         }
 
         int idx = numberOfTrailingZeros(king); // king
-        if (idx > 9) {
-            possibility = 0x70507L << (idx - 9);
-        } else {
-            possibility = 0x70507L >> (9 - idx);
-        }
-        if (idx % 8 < 4) {
-            possibility &= 0x3f3f3f3f3f3f3f3fL;
-        } else {
-            possibility &= 0xfcfcfcfcfcfcfcfcL;
-        }
-
-        underAttack |= possibility;
+        underAttack |= kingMask[idx];
 
         return underAttack;
     }

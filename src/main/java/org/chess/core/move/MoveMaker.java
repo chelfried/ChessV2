@@ -1,9 +1,10 @@
 package org.chess.core.move;
 
-import static java.lang.Character.getNumericValue;
-import static org.chess.core.pieces._Piece.piece;
+import org.chess.core.pieces._Piece;
 
-public class MoveMaker {
+import static java.lang.Character.getNumericValue;
+
+public class MoveMaker extends _Piece {
 
     public static long[] makeMove(long[] board, String move) {
         return new long[]{

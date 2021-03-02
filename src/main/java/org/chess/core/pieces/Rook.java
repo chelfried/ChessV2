@@ -9,7 +9,7 @@ public class Rook extends _Piece {
         long i = rook & - rook;
         while (i != 0) {
             int idx = numberOfTrailingZeros(i);
-            attackUtil(pseudoMoves, orthogonalMoves(idx) & antiPlayerPieces, idx,'d');
+            moveUtil(pseudoMoves, orthogonalMoves(idx) & antiPlayerPieces, idx,'d');
             rook &= ~ i;
             i = rook & - rook;
         }

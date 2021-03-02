@@ -4,15 +4,26 @@ public class GameBoard {
 
     protected static char[] charBoard = new char[64];
 
+//    protected static char[] startingCharBoard = {
+//            'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r',
+//            'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p',
+//            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+//            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+//            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+//            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+//            'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P',
+//            'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R',
+//    };
+
     protected static char[] startingCharBoard = {
-            'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r',
-            'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p',
+            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+            ' ', ' ', ' ', ' ', 'k', ' ', ' ', ' ',
+            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+            ' ', ' ', ' ', 'K', ' ', ' ', ' ', ' ',
             ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
             ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
             ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
             ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-            'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P',
-            'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R',
     };
 
     protected static long[] bitboard = {
@@ -32,7 +43,7 @@ public class GameBoard {
             0xfL,   //  board[13]  castling rights
     };
 
-    public static long[] position = {
+    public static long[] position = { // piece on bitboard at index x
             0x0000000000000001L, 0x0000000000000002L, 0x0000000000000004L, 0x0000000000000008L,
             0x0000000000000010L, 0x0000000000000020L, 0x0000000000000040L, 0x0000000000000080L,
             0x0000000000000100L, 0x0000000000000200L, 0x0000000000000400L, 0x0000000000000800L,

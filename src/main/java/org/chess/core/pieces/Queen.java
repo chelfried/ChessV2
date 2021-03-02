@@ -9,7 +9,7 @@ public class Queen extends _Piece {
         long i = queen & - queen;
         while (i != 0) {
             int idx = numberOfTrailingZeros(i);
-            attackUtil(pseudoMoves, (orthogonalMoves(idx) | diagonalMoves(idx)) & antiPlayerPieces, idx,'d');
+            moveUtil(pseudoMoves, (orthogonalMoves(idx) | diagonalMoves(idx)) & antiPlayerPieces, idx,'d');
             queen &= ~ i;
             i = queen & - queen;
         }
