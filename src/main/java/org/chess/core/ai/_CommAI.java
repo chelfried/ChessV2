@@ -15,7 +15,7 @@ public class _CommAI {
 
         bestMove = null;
         leafNodesEvaluated = 0;
-        searchToDepth = 8;
+        searchToDepth = 7;
         searchTime = 0;
 
         while (searchTime < 1500 && searchToDepth < 20) {

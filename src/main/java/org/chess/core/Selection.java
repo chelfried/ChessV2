@@ -2,7 +2,6 @@ package org.chess.core;
 
 import static java.lang.Character.isLowerCase;
 import static java.lang.Character.isUpperCase;
-import static org.chess.core.PlayerActions.moveByHuman;
 import static org.chess.core.move.LegalMoves.getLegalMovesForSelection;
 
 public class Selection extends GameMechanics{

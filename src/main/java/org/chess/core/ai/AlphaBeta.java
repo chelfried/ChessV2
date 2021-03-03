@@ -5,7 +5,6 @@ import static org.chess.core.GameMechanics.isGameRunning;
 import static org.chess.core.move.MoveMaker.*;
 import static org.chess.core.ai.Rating.calcRating;
 import static org.chess.core.move.MoveSorting.getLegalSortedMoves;
-import static org.chess.core.pieces._Piece.*;
 
 public class AlphaBeta extends _CommAI {
 

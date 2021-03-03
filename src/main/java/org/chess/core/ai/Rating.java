@@ -4,15 +4,98 @@ import static java.lang.Long.numberOfTrailingZeros;
 
 public class Rating {
 
-    private final static long[] isolatedPawnsMask = {0x0L, 0x0L, 0x0L, 0x0L, 0x0L, 0x0L, 0x0L, 0x0L, 0x30203L,
-            0x70507L, 0xe0a0eL, 0x1c141cL, 0x382830L, 0x705070L, 0xe0a0e0L, 0xc040c0L, 0x3020300L, 0x7050700L,
-            0xe0a0e00L, 0x1c141c00L, 0x38283800L, 0x70507000L, 0xe0a0e000L, 0xc040c000L, 0x302030000L, 0x705070000L,
-            0xe0a0e0000L, 0x1c141c0000L, 0x3828380000L, 0x7050700000L, 0xe0a0e00000L, 0xc040c00000L, 0x30203000000L,
-            0x70507000000L, 0xe0a0e000000L, 0x1c141c000000L, 0x382838000000L, 0x705070000000L, 0xe0a0e0000000L,
-            0xc040c0000000L, 0x3020300000000L, 0x7050700000000L, 0xe0a0e00000000L, 0x1c141c00000000L,
-            0x38283800000000L, 0x70507000000000L, 0xe0a0e000000000L, 0xc040c000000000L, 0x302030000000000L,
-            0x705070000000000L, 0xe0a0e0000000000L, 0x1c141c0000000000L, 0x3828380000000000L, 0x7050700000000000L,
-            0xe0a0e00000000000L, 0xc040c00000000000L, 0x0L, 0x0L, 0x0L, 0x0L, 0x0L, 0x0L, 0x0L, 0x0L
+    public static int calcRating(long[] board) {
+
+        int rating = 0;
+
+        int bishopValue = 305;
+        int knightValue = 333;
+        int rookValue = 563;
+        int queenValue = 950;
+        int kingValue = 20000;
+
+        rating += ratingPawnStructure(board[0], tableWP);
+        rating += ratingUtil(board[2], tableWB, bishopValue);  // white bishop
+        rating += ratingUtil(board[1], tableWN, knightValue);  // white knight
+        rating += ratingUtil(board[3], tableWR, rookValue);  // white rook
+        rating += ratingUtil(board[4], tableWQ, queenValue);  // white queen
+        rating += ratingUtil(board[5], tableWK, kingValue);    // white king
+        rating += bishopPairs(board[2]);
+
+        rating -= ratingPawnStructure(board[6], tableBP);
+        rating -= ratingUtil(board[8], tableBB, bishopValue);  // black bishop
+        rating -= ratingUtil(board[7], tableBN, knightValue);  // black knight
+        rating -= ratingUtil(board[9], tableBR, rookValue);  // black rook
+        rating -= ratingUtil(board[10], tableBQ, queenValue); // black queen
+        rating -= ratingUtil(board[11], tableBK, kingValue);   // black king
+        rating -= bishopPairs(board[8]);
+
+        return rating;
+    }
+
+    public static int ratingUtil(long board, int[] mask, int centiPawns) {
+        int rating = 0;
+        long i = board & - board;
+        while (i != 0) {
+            int idx = numberOfTrailingZeros(i);
+            rating += mask[idx];
+            rating += centiPawns;
+            board &= ~ i;
+            i = board & - board;
+        }
+        return rating;
+    }
+
+    public static int ratingPawnStructure(long board, int[] mask) {
+        int rating = 0;
+        long boardT = board;
+        long i = board & - board;
+        while (i != 0) {
+            int idx = numberOfTrailingZeros(i);
+            if ((isolatedPawnsMask[idx] & boardT) == 0) {
+                rating -= 50; // isolated pawn
+            }
+            rating += mask[idx];
+            rating += 100;
+            board &= ~ i;
+            i = board & - board;
+            if ((doubledPawnsMask[idx % 8] & board) != 0) {
+                rating -= 50; // doubled pawn
+            }
+        }
+        return rating;
+    }
+
+    public static int bishopPairs(long board) {
+        int noOfBishops = 0;
+        long i = board & - board;
+        while (i != 0) {
+            noOfBishops++;
+            board &= ~ i;
+            i = board & - board;
+        }
+        if (noOfBishops > 1) {
+            return 50;
+        } else return 0;
+    }
+
+    private final static long[] isolatedPawnsMask = {
+            0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
+            0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
+            0x0000000000030203L, 0x0000000000070507L, 0x00000000000e0a0eL, 0x00000000001c141cL,
+            0x0000000000382838L, 0x0000000000705070L, 0x0000000000e0a0e0L, 0x0000000000c040c0L,
+            0x0000000003020300L, 0x0000000007050700L, 0x000000000e0a0e00L, 0x000000001c141c00L,
+            0x0000000038283800L, 0x0000000070507000L, 0x00000000e0a0e000L, 0x00000000c040c000L,
+            0x0000000302030000L, 0x0000000705070000L, 0x0000000e0a0e0000L, 0x0000001c141c0000L,
+            0x0000003828380000L, 0x0000007050700000L, 0x000000e0a0e00000L, 0x000000c040c00000L,
+            0x0000030203000000L, 0x0000070507000000L, 0x00000e0a0e000000L, 0x00001c141c000000L,
+            0x0000382838000000L, 0x0000705070000000L, 0x0000e0a0e0000000L, 0x0000c040c0000000L,
+            0x0003020300000000L, 0x0007050700000000L, 0x000e0a0e00000000L, 0x001c141c00000000L,
+            0x0038283800000000L, 0x0070507000000000L, 0x00e0a0e000000000L, 0x00c040c000000000L,
+            0x0302030000000000L, 0x0705070000000000L, 0x0e0a0e0000000000L, 0x1c141c0000000000L,
+            0x3828380000000000L, 0x7050700000000000L, 0xe0a0e00000000000L, 0xc040c00000000000L,
+            0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
+            0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
     };
 
     private final static long[] doubledPawnsMask = {0x101010101010101L, 0x202020202020202L, 0x404040404040404L,
@@ -150,124 +233,5 @@ public class Rating {
             20, 20, 0, 0, 0, 0, 20, 20,
             20, 30, 10, 0, 0, 10, 30, 20
     };
-
-    public static int calcRating(long[] board) {
-
-        long wPawn = board[0], wKnight = board[1], wBishop = board[2], wRook = board[3], wQueen = board[4], wKing = board[5];
-        long bPawn = board[6], bKnight = board[7], bBishop = board[8], bRook = board[9], bQueen = board[10], bKing = board[11];
-
-        int rating = 0;
-        long i;
-
-        long WPt = wPawn;
-        i = wPawn & - wPawn;
-        while (i != 0) {
-            int idx = numberOfTrailingZeros(i);
-            if ((isolatedPawnsMask[idx] & WPt) == 0) {
-                rating -= 50; // isolated pawn
-            }
-            rating += tableWP[idx] + 100;
-            wPawn &= ~ i;
-            i = wPawn & - wPawn;
-            if ((doubledPawnsMask[idx % 8] & wPawn) != 0) {
-                rating -= 50; // doubled pawn
-            }
-        }
-
-        long BPt = bPawn;
-        i = bPawn & - bPawn;
-        while (i != 0) {
-            int idx = numberOfTrailingZeros(i);
-            if ((isolatedPawnsMask[idx] & BPt) == 0) {
-                rating += 50; // isolated pawn
-            }
-            rating -= tableBP[idx] + 100;
-            bPawn &= ~ i;
-            i = bPawn & - bPawn;
-            if ((doubledPawnsMask[idx % 8] & bPawn) != 0) {
-                rating += 50; // doubled pawn
-            }
-        }
-
-        i = wKnight & - wKnight;
-        while (i != 0) {
-            int idx = numberOfTrailingZeros(i);
-            rating += tableWN[idx] + 333;
-            wKnight &= ~ i;
-            i = wKnight & - wKnight;
-        }
-
-        i = bKnight & - bKnight;
-        while (i != 0) {
-            int idx = numberOfTrailingZeros(i);
-            rating -= tableBN[idx] + 333;
-            bKnight &= ~ i;
-            i = bKnight & - bKnight;
-        }
-
-        int whiteBishops = 0;
-        i = wBishop & - wBishop;
-        while (i != 0) {
-            int idx = numberOfTrailingZeros(i);
-            rating += tableWB[idx] + 305;
-            whiteBishops++;
-            wBishop &= ~ i;
-            i = wBishop & - wBishop;
-        }
-        if (whiteBishops == 2) {
-            rating += 50;
-        }
-
-        int blackBishops = 0;
-        i = bBishop & - bBishop;
-        while (i != 0) {
-            int idx = numberOfTrailingZeros(i);
-            rating -= tableBB[idx] + 305;
-            blackBishops++;
-            bBishop &= ~ i;
-            i = bBishop & - bBishop;
-        }
-        if (blackBishops == 2) {
-            rating -= 50;
-        }
-
-        i = wRook & - wRook;
-        while (i != 0) {
-            int idx = numberOfTrailingZeros(i);
-            rating += tableWR[idx] + 563;
-            wRook &= ~ i;
-            i = wRook & - wRook;
-        }
-
-        i = bRook & - bRook;
-        while (i != 0) {
-            int idx = numberOfTrailingZeros(i);
-            rating -= tableBR[idx] + 563;
-            bRook &= ~ i;
-            i = bRook & - bRook;
-        }
-
-        i = wQueen & - wQueen;
-        while (i != 0) {
-            int idx = numberOfTrailingZeros(i);
-            rating += tableWQ[idx] + 950;
-            wQueen &= ~ i;
-            i = wQueen & - wQueen;
-        }
-
-        i = bQueen & - bQueen;
-        while (i != 0) {
-            int idx = numberOfTrailingZeros(i);
-            rating -= tableBQ[idx] + 950;
-            bQueen &= ~ i;
-            i = bQueen & - bQueen;
-        }
-
-        rating += tableWK[numberOfTrailingZeros(wKing)];
-
-        rating -= tableBK[numberOfTrailingZeros(bKing)];
-
-        return rating;
-    }
 
 }

@@ -26,31 +26,33 @@ public class _Piece extends _Masks{
         piecesMask = wPawn | wKnight | wBishop | wRook | wQueen | wKing | bPawn | bKnight | bBishop | bRook | bQueen | bKing;
         antiPiecesMask = ~ piecesMask;
 
-        String pseudoMoves;
+        StringBuilder pseudoMoves = new StringBuilder();
 
         if (white) {
             antiPlayerPieces = ~ (wPawn | wKnight | wBishop | wRook | wQueen | wKing | bKing);
             playerPieces = wPawn | wKnight | wBishop | wRook | wQueen;
-            pseudoMoves = possibleWP(wPawn, enPassant)
-                    + possibleN(wKnight)
-                    + possibleB(wBishop)
-                    + possibleR(wRook)
-                    + possibleQ(wQueen)
-                    + possibleK(wKing)
-                    + possibleCW(board);
+            pseudoMoves
+                    .append(possibleWP(wPawn, enPassant))
+                    .append(possibleN(wKnight))
+                    .append(possibleB(wBishop))
+                    .append(possibleR(wRook))
+                    .append(possibleQ(wQueen))
+                    .append(possibleK(wKing))
+                    .append(possibleCW(board));
         } else {
             antiPlayerPieces = ~ (bPawn | bKnight | bBishop | bRook | bQueen | bKing | wKing);
             playerPieces = bPawn | bKnight | bBishop | bRook | bQueen;
-            pseudoMoves = possibleBP(bPawn, enPassant)
-                    + possibleN(bKnight)
-                    + possibleB(bBishop)
-                    + possibleR(bRook)
-                    + possibleQ(bQueen)
-                    + possibleK(bKing)
-                    + possibleCB(board);
+            pseudoMoves
+                    .append(possibleBP(bPawn, enPassant))
+                    .append(possibleN(bKnight))
+                    .append(possibleB(bBishop))
+                    .append(possibleR(bRook))
+                    .append(possibleQ(bQueen))
+                    .append(possibleK(bKing))
+                    .append(possibleCB(board));
         }
 
-        return pseudoMoves;
+        return pseudoMoves.toString();
     }
 
     static long orthogonalMoves(int s) {
@@ -82,28 +84,33 @@ public class _Piece extends _Masks{
     }
 
     public static long opponentAttack(boolean white, long[] board) {
-        long wPawn = board[0], wKnight = board[1], wBishop = board[2], wRook = board[3], wQueen = board[4], wKing = board[5];
-        long bPawn = board[6], bKnight = board[7], bBishop = board[8], bRook = board[9], bQueen = board[10], bKing = board[11];
 
-        long underAttack, possibility, i, king, queen, rook, bishop, knight;
-        piecesMask = wPawn | wKnight | wBishop | wRook | wQueen | wKing | bPawn | bKnight | bBishop | bRook | bQueen | bKing;
+        long underAttack = 0, i, king, queen, rook, bishop, knight, pawn;
+
+        piecesMask = board[0] | board[1] | board[2] | board[3] | board[4] | board[5] |
+                board[6] | board[7] | board[8] | board[9] | board[10] | board[11];
 
         if (white) {
-            underAttack = 0x7f7f7f7f7f7f7f7fL & (bPawn << 7); // pawn capture to right
-            underAttack |= 0xfefefefefefefefeL & (bPawn << 9); // pawn capture to left
-            king = bKing;
-            queen = bQueen;
-            rook = bRook;
-            bishop = bBishop;
-            knight = bKnight;
+            pawn = board[0];
+            king = board[11];
+            queen = board[10];
+            rook = board[9];
+            bishop = board[8];
+            knight = board[7];
         } else {
-            underAttack = 0xfefefefefefefefeL & (wPawn >> 7); // pawn capture to right
-            underAttack |= 0x7f7f7f7f7f7f7f7fL & (wPawn >> 9); // pawn capture to left
-            king = wKing;
-            queen = wQueen;
-            rook = wRook;
-            bishop = wBishop;
-            knight = wKnight;
+            pawn = board[6];
+            king = board[5];
+            queen = board[4];
+            rook = board[3];
+            bishop = board[2];
+            knight = board[1];
+        }
+
+        i = pawn & - pawn;
+        while (i != 0) {
+            underAttack |= wPAttack[numberOfTrailingZeros(i)];
+            pawn &= ~ i;
+            i = pawn & - pawn;
         }
 
         long queenRook = queen | rook; // queen orthogonal and rook
@@ -122,26 +129,16 @@ public class _Piece extends _Masks{
             i = queenBishop & - queenBishop;
         }
 
-        i = knight & - knight; // knight
+        i = knight & - knight;
         while (i != 0) {
             int idx = numberOfTrailingZeros(i);
-            if (idx > 18) {
-                possibility = 0xa1100110aL << (idx - 18);
-            } else {
-                possibility = 0xa1100110aL >> (18 - idx);
-            }
-            if (idx % 8 < 4) {
-                possibility &= 0x3f3f3f3f3f3f3f3fL;
-            } else {
-                possibility &= 0xfcfcfcfcfcfcfcfcL;
-            }
-            underAttack |= possibility;
+            underAttack |= knightAttack[idx];
             knight &= ~ i;
             i = knight & - knight;
 
         }
 
-        int idx = numberOfTrailingZeros(king); // king
+        int idx = numberOfTrailingZeros(king);
         underAttack |= kingMask[idx];
 
         return underAttack;

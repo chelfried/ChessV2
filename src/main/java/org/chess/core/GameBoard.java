@@ -4,27 +4,18 @@ public class GameBoard {
 
     protected static char[] charBoard = new char[64];
 
-//    protected static char[] startingCharBoard = {
-//            'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r',
-//            'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p',
-//            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-//            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-//            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-//            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-//            'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P',
-//            'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R',
-//    };
-
-    protected static char[] startingCharBoard = {
-            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-            ' ', ' ', ' ', ' ', 'k', ' ', ' ', ' ',
-            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-            ' ', ' ', ' ', 'K', ' ', ' ', ' ', ' ',
-            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-    };
+    public static char[] setupCharBoard(){
+        return new char[]{
+                'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r',
+                'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p',
+                ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+                ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+                ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+                ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+                'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P',
+                'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R',
+        };
+    }
 
     protected static long[] bitboard = {
             0x0L,   //  board[0]   white pawn board
@@ -63,7 +54,7 @@ public class GameBoard {
     };
 
     public static void charBoardToBitboard() {
-        charBoard = startingCharBoard;
+        charBoard = setupCharBoard();
         for (int i = 0; i < 64; i++) {
             if (charBoard[i] == 'P') {
                 bitboard[0] += position[i];
@@ -127,10 +118,6 @@ public class GameBoard {
 
     public static char[] getCharBoard() {
         return charBoard;
-    }
-
-    public static void setupCharBoard(){
-        charBoard = startingCharBoard;
     }
 
 }
