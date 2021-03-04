@@ -1,10 +1,12 @@
 package org.chess.core;
 
+import static org.chess.core.pieces._Masks.getPieceAt;
+
 public class GameBoard {
 
     protected static char[] charBoard = new char[64];
 
-    public static char[] setupCharBoard(){
+    private static char[] setupCharBoard() {
         return new char[]{
                 'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r',
                 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p',
@@ -34,84 +36,26 @@ public class GameBoard {
             0xfL,   //  board[13]  castling rights
     };
 
-    public static long[] position = { // piece on bitboard at index x
-            0x0000000000000001L, 0x0000000000000002L, 0x0000000000000004L, 0x0000000000000008L,
-            0x0000000000000010L, 0x0000000000000020L, 0x0000000000000040L, 0x0000000000000080L,
-            0x0000000000000100L, 0x0000000000000200L, 0x0000000000000400L, 0x0000000000000800L,
-            0x0000000000001000L, 0x0000000000002000L, 0x0000000000004000L, 0x0000000000008000L,
-            0x0000000000010000L, 0x0000000000020000L, 0x0000000000040000L, 0x0000000000080000L,
-            0x0000000000100000L, 0x0000000000200000L, 0x0000000000400000L, 0x0000000000800000L,
-            0x0000000001000000L, 0x0000000002000000L, 0x0000000004000000L, 0x0000000008000000L,
-            0x0000000010000000L, 0x0000000020000000L, 0x0000000040000000L, 0x0000000080000000L,
-            0x0000000100000000L, 0x0000000200000000L, 0x0000000400000000L, 0x0000000800000000L,
-            0x0000001000000000L, 0x0000002000000000L, 0x0000004000000000L, 0x0000008000000000L,
-            0x0000010000000000L, 0x0000020000000000L, 0x0000040000000000L, 0x0000080000000000L,
-            0x0000100000000000L, 0x0000200000000000L, 0x0000400000000000L, 0x0000800000000000L,
-            0x0001000000000000L, 0x0002000000000000L, 0x0004000000000000L, 0x0008000000000000L,
-            0x0010000000000000L, 0x0020000000000000L, 0x0040000000000000L, 0x0080000000000000L,
-            0x0100000000000000L, 0x0200000000000000L, 0x0400000000000000L, 0x0800000000000000L,
-            0x1000000000000000L, 0x2000000000000000L, 0x4000000000000000L, 0x8000000000000000L
-    };
+    private static final char[] charUtil = {'P', 'N', 'B', 'R', 'Q', 'K', 'p', 'n', 'b', 'r', 'q', 'k'};
 
     public static void charBoardToBitboard() {
         charBoard = setupCharBoard();
         for (int i = 0; i < 64; i++) {
-            if (charBoard[i] == 'P') {
-                bitboard[0] += position[i];
-            } else if (charBoard[i] == 'N') {
-                bitboard[1] += position[i];
-            } else if (charBoard[i] == 'B') {
-                bitboard[2] += position[i];
-            } else if (charBoard[i] == 'R') {
-                bitboard[3] += position[i];
-            } else if (charBoard[i] == 'Q') {
-                bitboard[4] += position[i];
-            } else if (charBoard[i] == 'K') {
-                bitboard[5] += position[i];
-            } else if (charBoard[i] == 'p') {
-                bitboard[6] += position[i];
-            } else if (charBoard[i] == 'n') {
-                bitboard[7] += position[i];
-            } else if (charBoard[i] == 'b') {
-                bitboard[8] += position[i];
-            } else if (charBoard[i] == 'r') {
-                bitboard[9] += position[i];
-            } else if (charBoard[i] == 'q') {
-                bitboard[10] += position[i];
-            } else if (charBoard[i] == 'k') {
-                bitboard[11] += position[i];
+            for (int j = 0; j < 12; j++) {
+                if (charUtil[j] == charBoard[i]) {
+                    bitboard[j] += getPieceAt(i);
+                }
             }
         }
     }
 
     public static void bitboardToCharBoard() {
         for (int i = 0; i < 64; i++) {
-            if (((bitboard[0] >> i) & 1) == 1) {
-                charBoard[i] = 'P';
-            } else if (((bitboard[1] >> i) & 1) == 1) {
-                charBoard[i] = 'N';
-            } else if (((bitboard[2] >> i) & 1) == 1) {
-                charBoard[i] = 'B';
-            } else if (((bitboard[3] >> i) & 1) == 1) {
-                charBoard[i] = 'R';
-            } else if (((bitboard[4] >> i) & 1) == 1) {
-                charBoard[i] = 'Q';
-            } else if (((bitboard[5] >> i) & 1) == 1) {
-                charBoard[i] = 'K';
-            } else if (((bitboard[6] >> i) & 1) == 1) {
-                charBoard[i] = 'p';
-            } else if (((bitboard[7] >> i) & 1) == 1) {
-                charBoard[i] = 'n';
-            } else if (((bitboard[8] >> i) & 1) == 1) {
-                charBoard[i] = 'b';
-            } else if (((bitboard[9] >> i) & 1) == 1) {
-                charBoard[i] = 'r';
-            } else if (((bitboard[10] >> i) & 1) == 1) {
-                charBoard[i] = 'q';
-            } else if (((bitboard[11] >> i) & 1) == 1) {
-                charBoard[i] = 'k';
-            } else {
-                charBoard[i] = ' ';
+            charBoard[i] = '.';
+            for (int j = 0; j < 12; j++) {
+                if ((getPieceAt(i) & bitboard[j]) != 0) {
+                    charBoard[i] = charUtil[j];
+                }
             }
         }
     }

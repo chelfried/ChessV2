@@ -127,7 +127,8 @@ public class GameMechanics extends GameBoard{
         resetSelection();
         gameRunning = false;
         charBoard = new char[64];
-        bitboard = new long[]{0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0xfL};
+        bitboard = new long[14];
+        bitboard[13] = 0xfL; // resets all castling rights
         humanPromotingWhite = false;
         humanPromotingBlack = false;
         whiteInCheck = false;
