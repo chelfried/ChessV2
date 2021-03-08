@@ -78,12 +78,12 @@ public class _Piece extends _Masks{
     }
 
     public static boolean isCheck(boolean white, long[] board) {
-        if(white && ((board[5] & opponentAttack(true,  board)) != 0)){
+        if(white && ((board[5] & attacked(true,  board)) != 0)){
             return true;
-        } else return ! white && ((board[11] & opponentAttack(false, board)) != 0);
+        } else return ! white && ((board[11] & attacked(false, board)) != 0);
     }
 
-    public static long opponentAttack(boolean white, long[] board) {
+    public static long attacked(boolean white, long[] board) {
 
         long underAttack = 0, i, king, queen, rook, bishop, knight, pawn;
 

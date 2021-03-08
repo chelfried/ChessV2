@@ -17,16 +17,16 @@ public class Rating {
         rating += ratingPawnStructure(board[0], tableWP);
         rating += ratingUtil(board[2], tableWB, bishopValue);  // white bishop
         rating += ratingUtil(board[1], tableWN, knightValue);  // white knight
-        rating += ratingUtil(board[3], tableWR, rookValue);  // white rook
-        rating += ratingUtil(board[4], tableWQ, queenValue);  // white queen
+        rating += ratingUtil(board[3], tableWR, rookValue);    // white rook
+        rating += ratingUtil(board[4], tableWQ, queenValue);   // white queen
         rating += ratingUtil(board[5], tableWK, kingValue);    // white king
         rating += bishopPairs(board[2]);
 
         rating -= ratingPawnStructure(board[6], tableBP);
         rating -= ratingUtil(board[8], tableBB, bishopValue);  // black bishop
         rating -= ratingUtil(board[7], tableBN, knightValue);  // black knight
-        rating -= ratingUtil(board[9], tableBR, rookValue);  // black rook
-        rating -= ratingUtil(board[10], tableBQ, queenValue); // black queen
+        rating -= ratingUtil(board[9], tableBR, rookValue);    // black rook
+        rating -= ratingUtil(board[10], tableBQ, queenValue);  // black queen
         rating -= ratingUtil(board[11], tableBK, kingValue);   // black king
         rating -= bishopPairs(board[8]);
 

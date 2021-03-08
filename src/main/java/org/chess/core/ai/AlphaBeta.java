@@ -77,7 +77,7 @@ public class AlphaBeta extends _CommAI {
         }
 
         if (moves.length() == 0) {
-            if ((isCheck(white, board))) {
+            if (isCheck(white, board)) {
                 return Integer.MAX_VALUE / (currentDepth + 1);
             } else {
                 return 0;
