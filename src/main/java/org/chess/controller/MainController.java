@@ -43,6 +43,12 @@ public class MainController {
         refreshPage();
     }
 
+    @PostMapping("/promote/{piece}")
+    public void promotePiece(@PathVariable int piece) {
+        promote(piece);
+        refreshPage();
+    }
+
     @GetMapping("/board")
     public static String[] getGamePieces() {
         return getPieces();
@@ -76,12 +82,6 @@ public class MainController {
     @GetMapping("/blackPromoting")
     static boolean checkForPromotionBlack() {
         return isHumanPromotingBlack();
-    }
-
-    @PostMapping("/promote/{piece}")
-    public void promotePiece(@PathVariable String piece) {
-        promote(piece);
-        refreshPage();
     }
 
     private MainController() throws IOException {

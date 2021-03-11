@@ -1,19 +1,20 @@
 package org.chess.core.pieces;
 
-import static java.lang.Long.numberOfTrailingZeros;
+import org.chess.core.move.Move;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Knight extends _Piece {
 
-    public static String possibleN(long knight) {
-        StringBuilder PseudoMoves = new StringBuilder();
-        long i = knight & - knight;
-        while (i != 0) {
-            int idx = numberOfTrailingZeros(i);
-            moveUtil(PseudoMoves, knightAttack[idx] & antiPlayerPieces, idx, 'd');
-            knight &= ~ i;
-            i = knight & - knight;
+    public static List<Move> possibleN(long knight) {
+        List<Move> pseudoMoves = new ArrayList<>();
+        List<Integer> positions = getBitPositions(knight);
+        for (Integer position : positions) {
+            long movement = knightAttack[position] & antiPlayerPieces;
+            moveUtil(pseudoMoves, movement, position, 0);
         }
-        return PseudoMoves.toString();
+        return pseudoMoves;
     }
 
 }

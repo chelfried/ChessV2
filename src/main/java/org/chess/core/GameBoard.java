@@ -36,7 +36,10 @@ public class GameBoard {
             0xfL,   //  board[13]  castling rights
     };
 
-    private static final char[] charUtil = {'P', 'N', 'B', 'R', 'Q', 'K', 'p', 'n', 'b', 'r', 'q', 'k'};
+    private static final char[] charUtil = {
+            'P', 'N', 'B', 'R', 'Q', 'K',
+            'p', 'n', 'b', 'r', 'q', 'k'
+    };
 
     public static void charBoardToBitboard() {
         charBoard = setupCharBoard();

@@ -103,9 +103,9 @@ export class AppComponent implements OnInit {
       });
   }
 
-  promote(piece: string) {
+  promote(piece: number) {
     this.http
-      .post<string>(this.publicIP + 'promote/' + piece, null)
+      .post<number>(this.publicIP + 'promote/' + piece, null)
       .subscribe(() => {
       });
   }

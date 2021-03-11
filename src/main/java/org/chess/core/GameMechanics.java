@@ -1,5 +1,7 @@
 package org.chess.core;
 
+import org.chess.core.move.Move;
+
 import static org.chess.controller.SSEController.refreshPage;
 import static org.chess.core.History.*;
 import static org.chess.core.Selection.*;
@@ -9,7 +11,7 @@ import static org.chess.core.move.LegalMoves.getLegalMoves;
 import static org.chess.core.move.MoveMaker.makeMove;
 import static org.chess.core.pieces._Piece.isCheck;
 
-public class GameMechanics extends GameBoard{
+public class GameMechanics extends GameBoard {
 
     protected static final boolean whiteAlwaysBottom = false;
     protected static boolean gameRunning;
@@ -22,7 +24,7 @@ public class GameMechanics extends GameBoard{
     protected static boolean checkmate;
     protected static boolean humanPromotingWhite;
     protected static boolean humanPromotingBlack;
-    protected static String promotingMove;
+    protected static Move promotingMove;
     protected static int moveNo;
 
     public static void initiateChess() {
@@ -33,36 +35,35 @@ public class GameMechanics extends GameBoard{
     }
 
     public static void moveByHuman(int sel) {
-        StringBuilder selectedMove = new StringBuilder();
-        selectedMove.append(pieceSelected / 8).append(pieceSelected % 8).append(sel / 8).append(sel % 8);
-        for (int i = 0; i < movesSelectedPiece.length(); i += 5) {
-            String move = movesSelectedPiece.substring(i, i + 5);
-            if (selectedMove.charAt(0) == move.charAt(0) &&
-                    selectedMove.charAt(1) == move.charAt(1) &&
-                    selectedMove.charAt(2) == move.charAt(2) &&
-                    selectedMove.charAt(3) == move.charAt(3)) {
-                if (move.charAt(4) == 'Q' || move.charAt(4) == 'R' || move.charAt(4) == 'B' || move.charAt(4) == 'N') {
+        Move selectedMove = null;
+        for (Move move : movesSelectedPiece) {
+            if (move.getFrom() == pieceSelected && move.getDest() == sel) {
+                selectedMove = new Move(pieceSelected, sel, move.getType());
+                if (move.getType() >= 11 && move.getType() <= 14) {
                     humanPromotingWhite = true;
                     pieceSelected = null;
-                    promotingMove = move.substring(0, 4);
-                    break;
-                } else if (move.charAt(4) == 'q' || move.charAt(4) == 'r' || move.charAt(4) == 'b' || move.charAt(4) == 'n') {
-                    humanPromotingBlack = true;
-                    pieceSelected = null;
-                    promotingMove = move.substring(0, 4);
+                    promotingMove = move;
                     break;
                 }
-                pieceSelected = null;
-                movesSelectedPiece = null;
-                legalFields = null;
-                applyMove(move);
-                break;
+                if (move.getType() >= 21 && move.getType() <= 24) {
+                    humanPromotingBlack = true;
+                    pieceSelected = null;
+                    promotingMove = move;
+                    break;
+                }
             }
+        }
+        if (! humanPromotingWhite && ! humanPromotingBlack) {
+            pieceSelected = null;
+            movesSelectedPiece = null;
+            legalFields = null;
+            applyMove(selectedMove);
         }
     }
 
+
     public static void moveByAI() {
-        String moveByAI = null;
+        Move moveByAI = null;
         aiThinking = true;
         refreshPage();
         if (getHistory().length() > 4) {
@@ -74,15 +75,21 @@ public class GameMechanics extends GameBoard{
         if (gameRunning) {
             applyMove(moveByAI);
         } else {
-            System.out.println("Match interrupted by player.");
+            System.out.println("Match was interrupted by player.");
         }
         aiThinking = false;
     }
 
-    public static void applyMove(String move) {
+    public static void applyMove(Move move) {
         bitboard = makeMove(bitboard, move);
         moveNo++;
-        System.out.printf("move %-13d %c%d%c%d\n", moveNo, move.charAt(1) + 49, Math.abs((move.charAt(0) - 48) - 8), move.charAt(3) + 49, Math.abs((move.charAt(2) - 48) - 8));
+        System.out.printf(
+                "move %-13d %c%d%c%d\n", moveNo,
+                (char) (move.getFrom() % 8 + 97),
+                Math.abs(move.getFrom() / 8 - 8),
+                (char) (move.getDest() % 8 + 97),
+                Math.abs(move.getDest() / 8 - 8)
+        );
         addMoveToHistory(move);
         updateIsWhiteInCheck();
         updateIsBlackInCheck();
@@ -101,23 +108,23 @@ public class GameMechanics extends GameBoard{
         }
     }
 
-    public static void promote(String piece) {
+    public static void promote(int piece) {
         humanPromotingWhite = false;
         humanPromotingBlack = false;
-        applyMove(promotingMove.concat(piece));
+        applyMove(new Move(promotingMove.getFrom(), promotingMove.getDest(), piece));
     }
 
     public static void updateIsStalemate() {
         if (! checkmate) {
-            boolean whiteCannotMove = playerTurn == 0 && getLegalMoves(true, bitboard).length() == 0;
-            boolean blackCannotMove = playerTurn == 1 && getLegalMoves(false, bitboard).length() == 0;
+            boolean whiteCannotMove = playerTurn == 0 && getLegalMoves(true, bitboard).size() == 0;
+            boolean blackCannotMove = playerTurn == 1 && getLegalMoves(false, bitboard).size() == 0;
             stalemate = whiteCannotMove || blackCannotMove;
         }
     }
 
     public static void updateIsCheckmate() {
-        boolean whiteCheckmated = whiteInCheck && getLegalMoves(true, bitboard).length() == 0;
-        boolean blackCheckmated = blackInCheck && getLegalMoves(false, bitboard).length() == 0;
+        boolean whiteCheckmated = whiteInCheck && getLegalMoves(true, bitboard).size() == 0;
+        boolean blackCheckmated = blackInCheck && getLegalMoves(false, bitboard).size() == 0;
         checkmate = whiteCheckmated || blackCheckmated;
     }
 
@@ -126,6 +133,7 @@ public class GameMechanics extends GameBoard{
         resetHistory();
         resetSelection();
         gameRunning = false;
+        aiThinking = false;
         charBoard = new char[64];
         bitboard = new long[14];
         bitboard[13] = 0xfL; // resets all castling rights
@@ -210,7 +218,7 @@ public class GameMechanics extends GameBoard{
         return humanPromotingBlack;
     }
 
-    public static String getPromotingMove() {
+    public static Move getPromotingMove() {
         return promotingMove;
     }
 

@@ -1,19 +1,20 @@
 package org.chess.core.pieces;
 
-import static java.lang.Long.numberOfTrailingZeros;
+import org.chess.core.move.Move;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Queen extends _Piece {
 
-    public static String possibleQ(long queen) {
-        StringBuilder pseudoMoves = new StringBuilder();
-        long i = queen & - queen;
-        while (i != 0) {
-            int idx = numberOfTrailingZeros(i);
-            moveUtil(pseudoMoves, (orthogonalMoves(idx) | diagonalMoves(idx)) & antiPlayerPieces, idx,'d');
-            queen &= ~ i;
-            i = queen & - queen;
+    public static List<Move> possibleQ(long queen) {
+        List<Move> pseudoMoves = new ArrayList<>();
+        List<Integer> positions = getBitPositions(queen);
+        for (Integer pos : positions) {
+            long movement = (orthogonalMoves(pos) | diagonalMoves(pos)) & antiPlayerPieces;
+            moveUtil(pseudoMoves, movement, pos, 0);
         }
-        return pseudoMoves.toString();
+        return pseudoMoves;
     }
 
 }

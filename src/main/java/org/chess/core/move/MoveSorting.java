@@ -23,15 +23,13 @@ public class MoveSorting {
             {10000, 70000, 130000, 190000, 250000, 0}  //k
     };
 
-    public static String getLegalSortedMoves(boolean white, long[] board) {
+    public static List<Move> getLegalSortedMoves(boolean white, long[] board) {
 
-        String movesPseudo = getPseudoMoves(white, board);
+        List<Move> movesPseudo = getPseudoMoves(white, board);
 
-        List<Pair<Integer, String>> sortedList = new ArrayList<>();
+        List<Pair<Integer, Move>> sortedList = new ArrayList<>();
 
-        for (int i = 0; i < movesPseudo.length(); i += 5) {
-
-            String move = movesPseudo.substring(i, i + 5);
+        for (Move move : movesPseudo) {
 
             long[] updatedBoard = makeMove(board, move);
 
@@ -82,15 +80,15 @@ public class MoveSorting {
 
         }
 
-        sortedList.sort(Comparator.comparingInt(Pair<Integer, String>::getKey).reversed());
+        sortedList.sort(Comparator.comparingInt(Pair<Integer, Move>::getKey).reversed());
 
-        StringBuilder sortedMoves = new StringBuilder();
+        List<Move> sortedMoves = new ArrayList<>();
 
-        for (Pair<Integer, String> move : sortedList) {
-            sortedMoves.append(move.getValue());
+        for (Pair<Integer, Move> move : sortedList) {
+            sortedMoves.add(move.getValue());
         }
 
-        return sortedMoves.toString();
+        return sortedMoves;
     }
 
 }

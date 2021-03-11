@@ -1,5 +1,9 @@
 package org.chess.core.ai;
 
+import org.chess.core.move.Move;
+
+import java.util.List;
+
 import static org.chess.core.GameMechanics.getPlayerAI;
 import static org.chess.core.GameMechanics.isGameRunning;
 import static org.chess.core.move.MoveMaker.*;
@@ -15,7 +19,7 @@ public class AlphaBeta extends _CommAI {
             return calcRating(board) * (getPlayerAI() * 2 - 1);
         }
 
-        String moves;
+        List<Move> moves;
 
         if (currentDepth < searchToDepth - 2) {
             moves = getLegalSortedMoves(white, board);
@@ -23,7 +27,7 @@ public class AlphaBeta extends _CommAI {
             moves = getPseudoMoves(white, board);
         }
 
-        if (moves.length() == 0) {
+        if (moves.size() == 0) {
             if ((isCheck(white, board))) {
                 return Integer.MIN_VALUE / (currentDepth + 1);
             } else {
@@ -31,9 +35,8 @@ public class AlphaBeta extends _CommAI {
             }
         }
 
-        for (int i = 0; i < moves.length(); i += 5) {
+        for (Move move : moves) {
 
-            String move = moves.substring(i, i + 5);
             long[] updatedBoard = makeMove(board, move);
 
             if (! isCheck(white, updatedBoard)) {
@@ -48,8 +51,10 @@ public class AlphaBeta extends _CommAI {
                             bestMove = move;
                             System.out.printf(
                                     "\n%c%d%c%d %18.2f",
-                                    move.charAt(1) + 49, Math.abs((move.charAt(0) - 48) - 8),
-                                    move.charAt(3) + 49, Math.abs((move.charAt(2) - 48) - 8),
+                                    (char) (move.getFrom() % 8 + 97),
+                                    Math.abs(move.getFrom() / 8 - 8),
+                                    (char) (move.getDest() % 8 + 97),
+                                    Math.abs(move.getDest() / 8 - 8),
                                     (float) score / 100
                             );
                         }
@@ -68,7 +73,7 @@ public class AlphaBeta extends _CommAI {
             return calcRating(board) * (getPlayerAI() * 2 - 1);
         }
 
-        String moves;
+        List<Move> moves;
 
         if (currentDepth < searchToDepth - 2) {
             moves = getLegalSortedMoves(white, board);
@@ -76,7 +81,7 @@ public class AlphaBeta extends _CommAI {
             moves = getPseudoMoves(white, board);
         }
 
-        if (moves.length() == 0) {
+        if (moves.size() == 0) {
             if (isCheck(white, board)) {
                 return Integer.MAX_VALUE / (currentDepth + 1);
             } else {
@@ -84,9 +89,8 @@ public class AlphaBeta extends _CommAI {
             }
         }
 
-        for (int i = 0; i < moves.length(); i += 5) {
+        for (Move move : moves) {
 
-            String move = moves.substring(i, i + 5);
             long[] updatedBoard = makeMove(board, move);
 
             if (! isCheck(white, updatedBoard)) {
@@ -100,6 +104,7 @@ public class AlphaBeta extends _CommAI {
             }
 
         }
+
         return beta;
     }
 

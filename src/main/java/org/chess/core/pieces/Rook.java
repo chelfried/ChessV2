@@ -1,19 +1,20 @@
 package org.chess.core.pieces;
 
-import static java.lang.Long.numberOfTrailingZeros;
+import org.chess.core.move.Move;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Rook extends _Piece {
 
-    public static String possibleR(long rook) {
-        StringBuilder pseudoMoves = new StringBuilder();
-        long i = rook & - rook;
-        while (i != 0) {
-            int idx = numberOfTrailingZeros(i);
-            moveUtil(pseudoMoves, orthogonalMoves(idx) & antiPlayerPieces, idx,'d');
-            rook &= ~ i;
-            i = rook & - rook;
+    public static List<Move> possibleR(long rook) {
+        List<Move> pseudoMoves = new ArrayList<>();
+        List<Integer> positions = getBitPositions(rook);
+        for (Integer pos : positions) {
+            long movement = orthogonalMoves(pos) & antiPlayerPieces;
+            moveUtil(pseudoMoves, movement, pos, 0);
         }
-        return pseudoMoves.toString();
+        return pseudoMoves;
     }
 
 }

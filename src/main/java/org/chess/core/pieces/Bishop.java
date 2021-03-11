@@ -1,19 +1,20 @@
 package org.chess.core.pieces;
 
-import static java.lang.Long.numberOfTrailingZeros;
+import org.chess.core.move.Move;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Bishop extends _Piece {
 
-    public static String possibleB(long bishop) {
-        StringBuilder pseudoMoves = new StringBuilder();
-        long i = bishop & - bishop;
-        while (i != 0) {
-            int idx = numberOfTrailingZeros(i);
-            moveUtil(pseudoMoves, diagonalMoves(idx) & antiPlayerPieces, idx, 'd');
-            bishop &= ~ i;
-            i = bishop & - bishop;
+    public static List<Move> possibleB(long bishop) {
+        List<Move> pseudoMoves = new ArrayList<>();
+        List<Integer> positions = getBitPositions(bishop);
+        for (Integer position : positions) {
+            long movement = diagonalMoves(position) & antiPlayerPieces;
+            moveUtil(pseudoMoves, movement, position, 0);
         }
-        return pseudoMoves.toString();
+        return pseudoMoves;
     }
 
 }

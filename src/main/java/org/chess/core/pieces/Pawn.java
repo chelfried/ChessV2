@@ -1,101 +1,104 @@
 package org.chess.core.pieces;
 
-import static java.lang.Long.numberOfTrailingZeros;
+import org.chess.core.move.Move;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Pawn extends _Piece {
 
-    public static String possibleWP(long wPawn, long eP) {
-        StringBuilder pseudoMoves = new StringBuilder();
+    public static List<Move> possibleWP(long wPawn, long eP) {
+        List<Move> pseudoMoves = new ArrayList<>();
+        List<Integer> positions = getBitPositions(wPawn);
 
-        long wPawnTemp = wPawn;
-        long i = wPawnTemp & - wPawnTemp;
-        while (i != 0) {
-            int idx = numberOfTrailingZeros(i);
+        for (Integer pos : positions) {
 
-            // move forward
-            long fM = wPAdvance[idx] & antiPiecesMask;
-            moveUtil(pseudoMoves, fM, idx, 'd');
-
-            // double push
-            if ((wPAdvance[idx] & antiPiecesMask) != 0) {
-                long dP = wPDouble[idx] & antiPiecesMask;
-                moveUtil(pseudoMoves, dP, idx, 'e');
-            }
-
-            // captures
-            long cD = wPAttack[idx] & antiPlayerPieces & piecesMask;
-            moveUtil(pseudoMoves, cD, idx, 'd');
-
-            // promotion - move forward
-            long fP = wPPromotionAdv[idx] & antiPiecesMask;
-            moveUtil(pseudoMoves, fP, idx, 'N');
-            moveUtil(pseudoMoves, fP, idx, 'B');
-            moveUtil(pseudoMoves, fP, idx, 'R');
-            moveUtil(pseudoMoves, fP, idx, 'Q');
-
-            // promotion - captures
-            long cP = wPPromotionAtt[idx] & antiPlayerPieces & piecesMask;
-            moveUtil(pseudoMoves, cP, idx, 'N');
-            moveUtil(pseudoMoves, cP, idx, 'B');
-            moveUtil(pseudoMoves, cP, idx, 'R');
-            moveUtil(pseudoMoves, cP, idx, 'Q');
-
-            // en passant
-            long ePTemp = wPAttack[idx] & eP;
-            moveUtil(pseudoMoves, ePTemp, idx, 'E');
-
-            wPawnTemp &= ~ i;
-            i = wPawnTemp & - wPawnTemp;
-        }
-
-        return pseudoMoves.toString();
-    }
-
-    public static String possibleBP(long bPawn, long eP) {
-        StringBuilder pseudoMoves = new StringBuilder();
-
-        long bPawnTemp = bPawn;
-        long i = bPawnTemp & - bPawnTemp;
-        while (i != 0) {
-            int idx = numberOfTrailingZeros(i);
+            long movement;
 
             // move forward
-            long fM = bPAdvance[idx] & antiPiecesMask;
-            moveUtil(pseudoMoves, fM, idx, 'd');
-
-            // double push
-            if ((bPAdvance[idx] & antiPiecesMask) != 0) {
-                long dP = bPDouble[idx] & antiPiecesMask;
-                moveUtil(pseudoMoves, dP, idx, 'e');
-            }
+            movement = wPAdvance[pos] & antiPiecesMask;
+            moveUtil(pseudoMoves, movement, pos, 0);
 
             // captures
-            long cD = bPAttack[idx] & antiPlayerPieces & piecesMask;
-            moveUtil(pseudoMoves, cD, idx, 'd');
+            movement = wPAttack[pos] & antiPlayerPieces & piecesMask;
+            moveUtil(pseudoMoves, movement, pos, 0);
 
-            // promotion - move forward
-            long fP = bPPromotionAdv[idx] & antiPiecesMask;
-            moveUtil(pseudoMoves, fP, idx, 'n');
-            moveUtil(pseudoMoves, fP, idx, 'b');
-            moveUtil(pseudoMoves, fP, idx, 'r');
-            moveUtil(pseudoMoves, fP, idx, 'q');
-
-            // promotion - captures
-            long cP = bPPromotionAtt[idx] & antiPlayerPieces & piecesMask;
-            moveUtil(pseudoMoves, cP, idx, 'n');
-            moveUtil(pseudoMoves, cP, idx, 'b');
-            moveUtil(pseudoMoves, cP, idx, 'r');
-            moveUtil(pseudoMoves, cP, idx, 'q');
+            // double push
+            if ((wPAdvance[pos] & antiPiecesMask) != 0) {
+                movement = wPDouble[pos] & antiPiecesMask;
+                moveUtil(pseudoMoves, movement, pos, 1);
+            }
 
             // en passant
-            long ePTemp = bPAttack[idx] & eP;
-            moveUtil(pseudoMoves, ePTemp, idx, 'E');
+            movement = wPAttack[pos] & eP;
+            moveUtil(pseudoMoves, movement, pos, 2);
 
-            bPawnTemp &= ~ i;
-            i = bPawnTemp & - bPawnTemp;
+            // promotion - move forward
+            movement = wPPromotionAdv[pos] & antiPiecesMask;
+
+            moveUtil(pseudoMoves, movement, pos, 11); // white bishop
+            moveUtil(pseudoMoves, movement, pos, 12); // white knight
+            moveUtil(pseudoMoves, movement, pos, 13); // white rook
+            moveUtil(pseudoMoves, movement, pos, 14); // white queen
+
+            // promotion - captures
+            movement = wPPromotionAtt[pos] & antiPlayerPieces & piecesMask;
+            moveUtil(pseudoMoves, movement, pos, 11); // white bishop
+            moveUtil(pseudoMoves, movement, pos, 12); // white knight
+            moveUtil(pseudoMoves, movement, pos, 13); // white rook
+            moveUtil(pseudoMoves, movement, pos, 14); // white queen
+
         }
 
-        return pseudoMoves.toString();
+        return pseudoMoves;
     }
+
+    public static List<Move> possibleBP(long bPawn, long eP) {
+        List<Move> pseudoMoves = new ArrayList<>();
+        List<Integer> positions = getBitPositions(bPawn);
+
+        for (Integer pos : positions) {
+
+            long movement;
+
+            // move forward
+            movement = bPAdvance[pos] & antiPiecesMask;
+            moveUtil(pseudoMoves, movement, pos, 0);
+
+            // captures
+            movement = bPAttack[pos] & antiPlayerPieces & piecesMask;
+            moveUtil(pseudoMoves, movement, pos, 0);
+
+            // double push
+            if ((bPAdvance[pos] & antiPiecesMask) != 0) {
+                movement = bPDouble[pos] & antiPiecesMask;
+                moveUtil(pseudoMoves, movement, pos, 1);
+            }
+
+            // en passant
+            movement = bPAttack[pos] & eP;
+            moveUtil(pseudoMoves, movement, pos, 2);
+
+            // promotion - move forward
+            movement = bPPromotionAdv[pos] & antiPiecesMask;
+
+            moveUtil(pseudoMoves, movement, pos, 21); // black bishop
+            moveUtil(pseudoMoves, movement, pos, 22); // black knight
+            moveUtil(pseudoMoves, movement, pos, 23); // black rook
+            moveUtil(pseudoMoves, movement, pos, 24); // black queen
+
+            // promotion - captures
+            movement = bPPromotionAtt[pos] & antiPlayerPieces & piecesMask;
+            moveUtil(pseudoMoves, movement, pos, 21); // black bishop
+            moveUtil(pseudoMoves, movement, pos, 22); // black knight
+            moveUtil(pseudoMoves, movement, pos, 23); // black rook
+            moveUtil(pseudoMoves, movement, pos, 24); // black queen
+
+        }
+
+        return pseudoMoves;
+    }
+
+
 }
 

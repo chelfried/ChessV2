@@ -1,5 +1,7 @@
 package org.chess.communication;
 
+import org.chess.core.move.Move;
+
 import static java.lang.Character.isLowerCase;
 import static java.lang.Character.isUpperCase;
 
@@ -94,9 +96,9 @@ public class FieldClass {
     public static void populateFieldsLastMove() {
         String history = getHistory();
         if (isHumanPromotingWhite() || isHumanPromotingBlack()) {
-            String promotingMove = getPromotingMove();
-            addLastMoveUtil(fieldClass, (promotingMove.charAt(0) - 48) * 8 + (promotingMove.charAt(1) - 48));
-            addLastMoveUtil(fieldClass, (promotingMove.charAt(2) - 48) * 8 + (promotingMove.charAt(3) - 48));
+            Move promotingMove = getPromotingMove();
+            addLastMoveUtil(fieldClass, promotingMove.getFrom());
+            addLastMoveUtil(fieldClass, promotingMove.getDest());
         } else if (history != null && ! history.equals("#")) {
             addLastMoveUtil(fieldClass, (history.charAt(history.length() - 4) - 48) * 8 + (history.charAt(history.length() - 3) - 48));
             addLastMoveUtil(fieldClass, (history.charAt(history.length() - 2) - 48) * 8 + (history.charAt(history.length() - 1) - 48));

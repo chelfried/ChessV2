@@ -1,21 +1,23 @@
 package org.chess.core.ai;
 
+import org.chess.core.move.Move;
+
 import static org.chess.core.GameMechanics.getActiveBitboard;
 import static org.chess.core.GameMechanics.getPlayerAI;
 
 public class _CommAI {
 
     static int searchToDepth;
-    static String bestMove;
+    static Move bestMove;
     static int searchTime;
 
     static int leafNodesEvaluated;
 
-    public static String moveSearchAI() {
+    public static Move moveSearchAI() {
 
         bestMove = null;
         leafNodesEvaluated = 0;
-        searchToDepth = 7;
+        searchToDepth = 8;
         searchTime = 0;
 
         while (searchTime < 1500 && searchToDepth < 20) {
