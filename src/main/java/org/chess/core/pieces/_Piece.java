@@ -158,8 +158,10 @@ public class _Piece extends _Masks {
 
         }
 
-        int idx = numberOfTrailingZeros(king);
-        underAttack |= kingMask[idx];
+        if (king != 0) {
+            int idx = numberOfTrailingZeros(king);
+            underAttack |= kingMask[idx];
+        }
 
         return underAttack;
     }

@@ -9,10 +9,12 @@ import static java.lang.Long.numberOfTrailingZeros;
 
 public class King extends _Piece {
 
-    public static List<Move> possibleK(long K) {
+    public static List<Move> possibleK(long king) {
         List<Move> pseudoMoves = new ArrayList<>();
-        int pos = numberOfTrailingZeros(K);
-        moveUtil(pseudoMoves, kingMask[pos] & antiPlayerPieces, pos, 0);
+        if (king != 0) {
+            int pos = numberOfTrailingZeros(king);
+            moveUtil(pseudoMoves, kingMask[pos] & antiPlayerPieces, pos, 0);
+        }
         return pseudoMoves;
     }
 

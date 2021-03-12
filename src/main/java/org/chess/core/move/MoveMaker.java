@@ -99,9 +99,9 @@ public class MoveMaker extends _Piece {
         int dest = move.getDest();
         if (move.getType() == 1) {
             if (from >= 48 && from <= 55) {
-                EP = (1L << dest - 8);
-            } else {
                 EP = (1L << dest + 8);
+            } else {
+                EP = (1L << dest - 8);
             }
         } else {
             EP = 0L;

@@ -81,7 +81,6 @@ public class Pawn extends _Piece {
 
             // promotion - move forward
             movement = bPPromotionAdv[pos] & antiPiecesMask;
-
             moveUtil(pseudoMoves, movement, pos, 21); // black bishop
             moveUtil(pseudoMoves, movement, pos, 22); // black knight
             moveUtil(pseudoMoves, movement, pos, 23); // black rook
