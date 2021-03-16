@@ -10,6 +10,7 @@ import static java.lang.Long.numberOfTrailingZeros;
 public class King extends _Piece {
 
     public static List<Move> possibleK(long king) {
+        pieceType = 5;
         List<Move> pseudoMoves = new ArrayList<>();
         if (king != 0) {
             int pos = numberOfTrailingZeros(king);

@@ -4,31 +4,31 @@ import static java.lang.Long.numberOfTrailingZeros;
 
 public class Rating {
 
+    private static final int bishopValue = 305;
+    private static final int knightValue = 333;
+    private static final int rookValue = 563;
+    private static final int queenValue = 950;
+    private static final int kingValue = 0;
+
     public static int calcRating(long[] board) {
 
         int rating = 0;
 
-        int bishopValue = 305;
-        int knightValue = 333;
-        int rookValue = 563;
-        int queenValue = 950;
-        int kingValue = 20000;
-
-        rating += ratingPawnStructure(board[0], tableWP);
-        rating += ratingUtil(board[2], tableWB, bishopValue);  // white bishop
+        rating += ratingPawnStructure(board[0], tableWP);      // white pawn
         rating += ratingUtil(board[1], tableWN, knightValue);  // white knight
+        rating += ratingUtil(board[2], tableWB, bishopValue);  // white bishop
+        rating += bishopPairs(board[2]);
         rating += ratingUtil(board[3], tableWR, rookValue);    // white rook
         rating += ratingUtil(board[4], tableWQ, queenValue);   // white queen
         rating += ratingUtil(board[5], tableWK, kingValue);    // white king
-        rating += bishopPairs(board[2]);
 
-        rating -= ratingPawnStructure(board[6], tableBP);
-        rating -= ratingUtil(board[8], tableBB, bishopValue);  // black bishop
+        rating -= ratingPawnStructure(board[6], tableBP);      // black pawn
         rating -= ratingUtil(board[7], tableBN, knightValue);  // black knight
+        rating -= ratingUtil(board[8], tableBB, bishopValue);  // black bishop
+        rating -= bishopPairs(board[8]);
         rating -= ratingUtil(board[9], tableBR, rookValue);    // black rook
         rating -= ratingUtil(board[10], tableBQ, queenValue);  // black queen
         rating -= ratingUtil(board[11], tableBK, kingValue);   // black king
-        rating -= bishopPairs(board[8]);
 
         return rating;
     }
@@ -98,8 +98,9 @@ public class Rating {
             0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
     };
 
-    private final static long[] doubledPawnsMask = {0x101010101010101L, 0x202020202020202L, 0x404040404040404L,
-            0x808080808080808L, 0x1010101010101010L, 0x2020202020202020L, 0x4040404040404040L, 0x8080808080808080L
+    private final static long[] doubledPawnsMask = {
+            0x0101010101010101L, 0x0202020202020202L, 0x0404040404040404L, 0x0808080808080808L,
+            0x1010101010101010L, 0x2020202020202020L, 0x4040404040404040L, 0x8080808080808080L,
     };
 
     private final static int[] tableBP = {

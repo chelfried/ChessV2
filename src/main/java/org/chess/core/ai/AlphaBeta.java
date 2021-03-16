@@ -6,9 +6,10 @@ import java.util.List;
 
 import static org.chess.core.GameMechanics.getPlayerAI;
 import static org.chess.core.GameMechanics.isGameRunning;
+import static org.chess.core.move.LegalMoves.*;
 import static org.chess.core.move.MoveMaker.*;
 import static org.chess.core.ai.Rating.calcRating;
-import static org.chess.core.move.MoveSorting.getLegalSortedMoves;
+import static org.chess.core.move.MoveSorting.getSortedLegalMoves;
 
 public class AlphaBeta extends _CommAI {
 
@@ -16,15 +17,16 @@ public class AlphaBeta extends _CommAI {
 
         if (currentDepth == searchToDepth) {
             leafNodesEvaluated++;
-            return calcRating(board) * (getPlayerAI() * 2 - 1);
+//            return calcRating(board) * (getPlayerAI() * 2 - 1);
+            return Quiescence.quiescenceMax(white, board, alpha, beta);
         }
 
         List<Move> moves;
 
-        if (currentDepth < searchToDepth - 2) {
-            moves = getLegalSortedMoves(white, board);
+        if (currentDepth < searchToDepth - 1) {
+            moves = getSortedLegalMoves(white, board);
         } else {
-            moves = getPseudoMoves(white, board);
+            moves = getLegalMoves(white, board);
         }
 
         if (moves.size() == 0) {
@@ -39,25 +41,25 @@ public class AlphaBeta extends _CommAI {
 
             long[] updatedBoard = makeMove(board, move);
 
-            if (! isCheck(white, updatedBoard)) {
-                if (isGameRunning()) {
-                    int score = alphaBetaMin(! white, updatedBoard, alpha, beta, currentDepth + 1);
-                    if (score >= beta) {
-                        return beta;
-                    }
-                    if (score > alpha) {
-                        alpha = score;
-                        if (currentDepth == 0) {
-                            bestMove = move;
-                            System.out.printf(
-                                    "\n%c%d%c%d %18.2f",
-                                    (char) (move.getFrom() % 8 + 97),
-                                    Math.abs(move.getFrom() / 8 - 8),
-                                    (char) (move.getDest() % 8 + 97),
-                                    Math.abs(move.getDest() / 8 - 8),
-                                    (float) score / 100
-                            );
-                        }
+            if (isGameRunning()) {
+                int score = alphaBetaMin(! white, updatedBoard, alpha, beta, currentDepth + 1);
+
+                if (score >= beta) {
+                    return beta;
+                }
+
+                if (score > alpha) {
+                    alpha = score;
+                    if (currentDepth == 0) {
+                        bestMove = move;
+                        System.out.printf(
+                                "\n%c%d%c%d %18.2f",
+                                (char) (move.getFrom() % 8 + 97),
+                                Math.abs(move.getFrom() / 8 - 8),
+                                (char) (move.getDest() % 8 + 97),
+                                Math.abs(move.getDest() / 8 - 8),
+                                (float) score / 100
+                        );
                     }
                 }
             }
@@ -70,15 +72,16 @@ public class AlphaBeta extends _CommAI {
 
         if (currentDepth == searchToDepth) {
             leafNodesEvaluated++;
-            return calcRating(board) * (getPlayerAI() * 2 - 1);
+//            return calcRating(board) * (getPlayerAI() * 2 - 1);
+            return Quiescence.quiescenceMin(white, board, alpha, beta);
         }
 
         List<Move> moves;
 
-        if (currentDepth < searchToDepth - 2) {
-            moves = getLegalSortedMoves(white, board);
+        if (currentDepth < searchToDepth - 1) {
+            moves = getSortedLegalMoves(white, board);
         } else {
-            moves = getPseudoMoves(white, board);
+            moves = getLegalMoves(white, board);
         }
 
         if (moves.size() == 0) {
@@ -93,14 +96,14 @@ public class AlphaBeta extends _CommAI {
 
             long[] updatedBoard = makeMove(board, move);
 
-            if (! isCheck(white, updatedBoard)) {
-                int score = alphaBetaMax(! white, updatedBoard, alpha, beta, currentDepth + 1);
-                if (score <= alpha) {
-                    return alpha;
-                }
-                if (score < beta) {
-                    beta = score;
-                }
+            int score = alphaBetaMax(! white, updatedBoard, alpha, beta, currentDepth + 1);
+
+            if (score <= alpha) {
+                return alpha;
+            }
+
+            if (score < beta) {
+                beta = score;
             }
 
         }

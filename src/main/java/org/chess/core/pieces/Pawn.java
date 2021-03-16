@@ -8,6 +8,7 @@ import java.util.List;
 public class Pawn extends _Piece {
 
     public static List<Move> possibleWP(long wPawn, long eP) {
+        pieceType = 0;
         List<Move> pseudoMoves = new ArrayList<>();
         List<Integer> positions = getBitPositions(wPawn);
 
@@ -54,6 +55,7 @@ public class Pawn extends _Piece {
     }
 
     public static List<Move> possibleBP(long bPawn, long eP) {
+        pieceType = 0;
         List<Move> pseudoMoves = new ArrayList<>();
         List<Integer> positions = getBitPositions(bPawn);
 

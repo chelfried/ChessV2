@@ -13,16 +13,11 @@ public class LegalMoves {
 
     public static List<Move> getLegalMoves(boolean white, long[] board) {
 
-        List<Move> pseudoMoves = getPseudoMoves(white, board);
-        List<Move> legalMoves = new ArrayList<>();
+        List<Move> moves = getPseudoMoves(white, board);
 
-        for (Move pseudoMove : pseudoMoves) {
-            if (! isCheck(white, makeMove(board, pseudoMove))) {
-                legalMoves.add(pseudoMove);
-            }
-        }
+        moves.removeIf(pseudoMove -> isCheck(white, makeMove(board, pseudoMove)));
 
-        return legalMoves;
+        return moves;
     }
 
     public static void getLegalMovesForSelection(boolean white, int startPos) {

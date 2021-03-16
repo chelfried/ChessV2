@@ -8,6 +8,7 @@ import java.util.List;
 public class Bishop extends _Piece {
 
     public static List<Move> possibleB(long bishop) {
+        pieceType = 2;
         List<Move> pseudoMoves = new ArrayList<>();
         List<Integer> positions = getBitPositions(bishop);
         for (Integer position : positions) {

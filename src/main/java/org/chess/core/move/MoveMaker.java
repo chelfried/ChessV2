@@ -20,8 +20,7 @@ public class MoveMaker extends _Piece {
                 makeMoveUtil(board[10], move, 24), // black queen
                 makeMoveUtil(board[11], move, 25), // black king
 
-                updateEnPassant(move),
-                updateCastling(board[13], move)
+                updateEnPassant(move), updateCastling(board[13], move)
         };
     }
 
@@ -37,37 +36,40 @@ public class MoveMaker extends _Piece {
             board &= ~ piece[dest];
         }
 
-        if (type >= 11 && type <= 14) { // promotion white piece
-            if (type == boardType) {
-                board |= piece[dest];
-            } else if (boardType == 10) {
-                board &= ~ piece[dest];
-            }
-        } else if (type >= 21 && type <= 24) { // promotion black piece
-            if (type == boardType) {
-                board |= piece[dest];
-            } else if (boardType == 20) {
-                board &= ~ piece[dest];
-            }
-        } else if (type == 2) { // en passant
-            if (from >= 32 && from <= 39) {
-                board &= ~ (1L << dest - 8);
-            } else {
-                board &= ~ (1L << dest + 8);
-            }
-        } else if (type == 3) { // castling
-            if (move.getFrom() == 60 && move.getDest() == 58 && boardType == 13) {
-                board &= 0xfeffffffffffffffL;
-                board |= 0x800000000000000L;
-            } else if (move.getFrom() == 60 && move.getDest() == 62 && boardType == 13) {
-                board &= 0x7fffffffffffffffL;
-                board |= 0x2000000000000000L;
-            } else if (move.getFrom() == 4 && move.getDest() == 2 && boardType == 23) {
-                board &= 0xfffffffffffffffeL;
-                board |= 0x8L;
-            } else if (move.getFrom() == 4 && move.getDest() == 6 && boardType == 23) {
-                board &= 0xffffffffffffff7fL;
-                board |= 0x20L;
+
+        if (type > 1) {
+            if (type == 3) { // castling
+                if (move.getFrom() == 60 && move.getDest() == 58 && boardType == 13) {
+                    board &= 0xfeffffffffffffffL;
+                    board |= 0x800000000000000L;
+                } else if (move.getFrom() == 60 && move.getDest() == 62 && boardType == 13) {
+                    board &= 0x7fffffffffffffffL;
+                    board |= 0x2000000000000000L;
+                } else if (move.getFrom() == 4 && move.getDest() == 2 && boardType == 23) {
+                    board &= 0xfffffffffffffffeL;
+                    board |= 0x8L;
+                } else if (move.getFrom() == 4 && move.getDest() == 6 && boardType == 23) {
+                    board &= 0xffffffffffffff7fL;
+                    board |= 0x20L;
+                }
+            } else if (type >= 21 && type <= 24) { // promotion black piece
+                if (type == boardType) {
+                    board |= piece[dest];
+                } else if (boardType == 20) {
+                    board &= ~ piece[dest];
+                }
+            } else if (type >= 11 && type <= 14) { // promotion white piece
+                if (type == boardType) {
+                    board |= piece[dest];
+                } else if (boardType == 10) {
+                    board &= ~ piece[dest];
+                }
+            } else if (type == 2) { // en passant
+                if (from >= 32 && from <= 39) {
+                    board &= ~ (1L << dest - 8);
+                } else {
+                    board &= ~ (1L << dest + 8);
+                }
             }
         }
 

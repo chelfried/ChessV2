@@ -1,6 +1,5 @@
 package org.chess.core.ai;
 
-import org.chess.core.GameBoard;
 import org.chess.core.GameMechanics;
 import org.chess.core.move.Move;
 
@@ -41,7 +40,7 @@ public class OpeningBook {
                     GameMechanics.wait(2000);
                     int from = xFrom * 8 + yFrom;
                     int dest = xDest * 8 + yDest;
-                    return new Move(from, dest, 0);
+                    return new Move(from, dest, 0, 0);
                 }
             }
         } catch (IOException e) {

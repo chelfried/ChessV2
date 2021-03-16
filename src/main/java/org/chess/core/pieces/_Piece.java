@@ -21,6 +21,23 @@ public class _Piece extends _Masks {
     static long antiPlayerPieces;
     static long piecesMask;
     static long antiPiecesMask;
+    static long opponentPawn;
+    static long opponentKnight;
+    static long opponentBishop;
+    static long opponentRook;
+    static long opponentQueen;
+    static long opponentKing;
+    static int pieceType;
+
+    private static final int[][] MVVLVA = { // Most Valuable Victim - Least Valuable Aggressor
+          // pawn    knight  bishop  rook    queen   king
+            {0xa006, 0xb006, 0xc006, 0xd006, 0xe006, 0x0000}, // pawn
+            {0xa005, 0xb005, 0xc005, 0xd005, 0xe005, 0x0000}, // knight
+            {0xa004, 0xb004, 0xc004, 0xd004, 0xe004, 0x0000}, // bishop
+            {0xa003, 0xb003, 0xc003, 0xd003, 0xe003, 0x0000}, // rook
+            {0xa002, 0xb002, 0xc002, 0xd002, 0xe002, 0x0000}, // queen
+            {0xa001, 0xb001, 0xc001, 0xd001, 0xe001, 0x0000}  // king
+    };
 
     public static List<Move> getPseudoMoves(boolean white, long[] board) {
 
@@ -36,6 +53,12 @@ public class _Piece extends _Masks {
         if (white) {
             antiPlayerPieces = ~ (wPawn | wKnight | wBishop | wRook | wQueen | wKing | bKing);
             playerPieces = wPawn | wKnight | wBishop | wRook | wQueen;
+            opponentPawn = bPawn;
+            opponentKnight = bKnight;
+            opponentBishop = bBishop;
+            opponentRook = bRook;
+            opponentQueen = bQueen;
+            opponentKing = bKing;
             pseudoMoves.addAll(possibleWP(wPawn, enPassant));
             pseudoMoves.addAll(possibleN(wKnight));
             pseudoMoves.addAll(possibleB(wBishop));
@@ -46,6 +69,12 @@ public class _Piece extends _Masks {
         } else {
             antiPlayerPieces = ~ (bPawn | bKnight | bBishop | bRook | bQueen | bKing | wKing);
             playerPieces = bPawn | bKnight | bBishop | bRook | bQueen;
+            opponentPawn = wPawn;
+            opponentKnight = wKnight;
+            opponentBishop = wBishop;
+            opponentRook = wRook;
+            opponentQueen = wQueen;
+            opponentKing = wKing;
             pseudoMoves.addAll(possibleBP(bPawn, enPassant));
             pseudoMoves.addAll(possibleN(bKnight));
             pseudoMoves.addAll(possibleB(bBishop));
@@ -85,9 +114,28 @@ public class _Piece extends _Masks {
         long m = movement & - movement;
         while (m != 0) {
             int idx = numberOfTrailingZeros(m);
-            moves.add(new Move(utilIdx, idx, type));
+            moves.add(new Move(utilIdx, idx, type, checkForCapture(idx)));
             movement &= ~ m;
             m = movement & - movement;
+        }
+    }
+
+    static int checkForCapture(int idx) {
+        long bit = 1L << idx;
+        if ((opponentPawn & bit) != 0){
+            return MVVLVA[pieceType][0];
+        } else if ((opponentKnight & bit) != 0){
+            return MVVLVA[pieceType][1];
+        } else if ((opponentBishop & bit) != 0){
+            return MVVLVA[pieceType][2];
+        } else if ((opponentRook & bit) != 0){
+            return MVVLVA[pieceType][3];
+        } else if ((opponentQueen & bit) != 0){
+            return MVVLVA[pieceType][4];
+        } else if ((opponentKing & bit) != 0){
+            return MVVLVA[pieceType][5];
+        } else {
+            return 0;
         }
     }
 

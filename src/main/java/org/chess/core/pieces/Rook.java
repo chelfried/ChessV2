@@ -8,6 +8,7 @@ import java.util.List;
 public class Rook extends _Piece {
 
     public static List<Move> possibleR(long rook) {
+        pieceType = 3;
         List<Move> pseudoMoves = new ArrayList<>();
         List<Integer> positions = getBitPositions(rook);
         for (Integer pos : positions) {

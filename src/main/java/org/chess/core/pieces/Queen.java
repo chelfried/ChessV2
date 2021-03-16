@@ -8,6 +8,7 @@ import java.util.List;
 public class Queen extends _Piece {
 
     public static List<Move> possibleQ(long queen) {
+        pieceType = 4;
         List<Move> pseudoMoves = new ArrayList<>();
         List<Integer> positions = getBitPositions(queen);
         for (Integer pos : positions) {
