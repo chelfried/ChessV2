@@ -4,11 +4,9 @@ import org.chess.core.move.Move;
 
 import java.util.List;
 
-import static org.chess.core.GameMechanics.getPlayerAI;
 import static org.chess.core.GameMechanics.isGameRunning;
 import static org.chess.core.move.LegalMoves.*;
 import static org.chess.core.move.MoveMaker.*;
-import static org.chess.core.ai.Rating.calcRating;
 import static org.chess.core.move.MoveSorting.getSortedLegalMoves;
 
 public class AlphaBeta extends _CommAI {
@@ -17,7 +15,6 @@ public class AlphaBeta extends _CommAI {
 
         if (currentDepth == searchToDepth) {
             leafNodesEvaluated++;
-//            return calcRating(board) * (getPlayerAI() * 2 - 1);
             return Quiescence.quiescenceMax(white, board, alpha, beta);
         }
 
@@ -72,7 +69,6 @@ public class AlphaBeta extends _CommAI {
 
         if (currentDepth == searchToDepth) {
             leafNodesEvaluated++;
-//            return calcRating(board) * (getPlayerAI() * 2 - 1);
             return Quiescence.quiescenceMin(white, board, alpha, beta);
         }
 

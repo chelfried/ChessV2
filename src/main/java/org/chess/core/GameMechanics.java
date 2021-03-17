@@ -13,7 +13,7 @@ import static org.chess.core.pieces._Piece.isCheck;
 
 public class GameMechanics extends GameBoard {
 
-    protected static final boolean whiteAlwaysBottom = true;
+    protected static final boolean whiteAlwaysBottom = false;
     protected static boolean gameRunning;
     protected static int playerAI;
     protected static int playerTurn;
