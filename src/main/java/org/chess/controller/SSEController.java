@@ -7,12 +7,13 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @RestController
+@CrossOrigin
+@RequestMapping(value = "/api/")
 public class SSEController {
 
     private static final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
-    @CrossOrigin
-    @RequestMapping("api/subscribe")
+    @GetMapping("subscribe")
     public static SseEmitter subscribeToSSE() {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         emitter.onCompletion(() -> emitters.remove(emitter));
@@ -20,7 +21,7 @@ public class SSEController {
         return emitter;
     }
 
-    @PostMapping("api/event")
+    @PostMapping("event")
     public static void refreshPage() {
         for (SseEmitter emitter : emitters) {
             try {

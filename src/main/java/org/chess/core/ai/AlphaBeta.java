@@ -39,6 +39,7 @@ public class AlphaBeta extends _CommAI {
             long[] updatedBoard = makeMove(board, move);
 
             if (isGameRunning()) {
+
                 int score = alphaBetaMin(! white, updatedBoard, alpha, beta, currentDepth + 1);
 
                 if (score >= beta) {
@@ -59,6 +60,7 @@ public class AlphaBeta extends _CommAI {
                         );
                     }
                 }
+
             }
 
         }

@@ -14,11 +14,9 @@ export class AppComponent implements OnInit {
 
   navSub;
 
-  publicIP = 'http://5.12.12.226:81/api/';
+  localhost = 'http://127.0.0.1:80/api/';
 
   title = 'Chess';
-
-  publicIpAddr: string;
 
   gameStarted: boolean;
   playingBlack: boolean;
@@ -51,8 +49,8 @@ export class AppComponent implements OnInit {
   }
 
   subscribeToSSE() {
-    this.sseClient.get(this.publicIP + 'subscribe')
-      .subscribe(data => {
+    this.sseClient.get(this.localhost + 'subscribe')
+      .subscribe(() => {
         this.hasGameStarted();
         this.getFieldClasses();
         this.getPieces();
@@ -65,7 +63,7 @@ export class AppComponent implements OnInit {
 
   getPieces() {
     this.http
-      .get<string[]>(this.publicIP + 'board')
+      .get<string[]>(this.localhost + 'board')
       .subscribe(data => {
         this.board = data;
       });
@@ -73,7 +71,7 @@ export class AppComponent implements OnInit {
 
   getFieldClasses() {
     this.http
-      .get<string[]>(this.publicIP + 'fieldClass')
+      .get<string[]>(this.localhost + 'fieldClass')
       .subscribe(data => {
         this.fieldClass = data;
       });
@@ -81,7 +79,7 @@ export class AppComponent implements OnInit {
 
   getPlayerColor() {
     this.http
-      .get<boolean>(this.publicIP + 'playingBlack')
+      .get<boolean>(this.localhost + 'playingBlack')
       .subscribe(data => {
         this.playingBlack = data;
       });
@@ -89,7 +87,7 @@ export class AppComponent implements OnInit {
 
   isWhitePromoting() {
     this.http
-      .get<boolean>(this.publicIP + 'whitePromoting')
+      .get<boolean>(this.localhost + 'whitePromoting')
       .subscribe(data => {
         this.whitePromoting = data;
       });
@@ -97,7 +95,7 @@ export class AppComponent implements OnInit {
 
   isBlackPromoting() {
     this.http
-      .get<boolean>(this.publicIP + 'blackPromoting')
+      .get<boolean>(this.localhost + 'blackPromoting')
       .subscribe(data => {
         this.blackPromoting = data;
       });
@@ -105,14 +103,14 @@ export class AppComponent implements OnInit {
 
   promote(piece: number) {
     this.http
-      .post<number>(this.publicIP + 'promote/' + piece, null)
+      .post<number>(this.localhost + 'promote/' + piece, null)
       .subscribe(() => {
       });
   }
 
   getGameMessage() {
     this.http
-      .get<string>(this.publicIP + 'gameMessage')
+      .get<string>(this.localhost + 'gameMessage')
       .subscribe(response => {
         delay(200);
         this.gameMessage = response;
@@ -121,7 +119,7 @@ export class AppComponent implements OnInit {
 
   pickColor(color: string) {
     this.http
-      .post<string>(this.publicIP + color, null)
+      .post<string>(this.localhost + color, null)
       .subscribe(() => {
         delay(100);
         window.location.reload();
@@ -130,7 +128,7 @@ export class AppComponent implements OnInit {
 
   resetBoard() {
     this.http
-      .post<string>(this.publicIP + 'reset/', null)
+      .post<string>(this.localhost + 'reset/', null)
       .subscribe(() => {
         delay(100);
         window.location.reload();
@@ -139,14 +137,14 @@ export class AppComponent implements OnInit {
 
   select(sel: number) {
     this.http
-      .post<string>(this.publicIP + sel, null)
+      .post<string>(this.localhost + sel, null)
       .subscribe(() => {
       });
   }
 
   hasGameStarted() {
     this.http
-      .get<boolean>(this.publicIP + 'gameStarted')
+      .get<boolean>(this.localhost + 'gameStarted')
       .subscribe(data => {
         this.gameStarted = data;
       });

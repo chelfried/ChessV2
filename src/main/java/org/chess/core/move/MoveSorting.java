@@ -13,7 +13,7 @@ public class MoveSorting {
 
     public static List<Move> getSortedLegalMoves(boolean white, long[] board) {
 
-        List<Move> pseudoMoves = getPseudoMoves(white, board);
+        List<Move> pseudoMoves = getPseudoMoves(white, board, false);
         List<Move> legalMoves = new ArrayList<>();
 
         for (Move move : pseudoMoves) {
@@ -33,27 +33,6 @@ public class MoveSorting {
         legalMoves.sort(Comparator.comparing(Move::getRate).reversed());
 
         return legalMoves;
-    }
-
-    public static List<Move> getSortedPseudoMoves(boolean white, long[] board) {
-
-        List<Move> pseudoMoves = getPseudoMoves(white, board);
-
-        for (Move move : pseudoMoves) {
-
-            if (move.getRate() == 0) {
-                if (white) {
-                    move.setRate(calcRating(makeMove(board, move)));
-                } else {
-                    move.setRate(calcRating(makeMove(board, move)) * - 1);
-                }
-            }
-
-        }
-
-        pseudoMoves.sort(Comparator.comparing(Move::getRate).reversed());
-
-        return pseudoMoves;
     }
 
 }

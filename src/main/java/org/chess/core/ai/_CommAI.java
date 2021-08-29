@@ -30,7 +30,6 @@ public class _CommAI {
         System.out.printf("search depth %10d\n", searchToDepth);
         System.out.printf("nodes/second %10d\n", (leafNodesEvaluated / (searchTime + 1)) * 1000);
         System.out.print("***********************\n\n");
-        searchToDepth++;
 
         return bestMove;
     }
@@ -42,8 +41,8 @@ public class _CommAI {
     }
 
     public static int endStopWatch() {
-        long nowMillis = System.currentTimeMillis();
-        return (int) ((nowMillis - createdMillis));
+        long currentTimeInMillis = System.currentTimeMillis();
+        return (int) ((currentTimeInMillis - createdMillis));
     }
 
 }

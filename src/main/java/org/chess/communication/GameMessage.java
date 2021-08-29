@@ -1,7 +1,5 @@
 package org.chess.communication;
 
-import org.chess.core.GameBoard;
-
 import static org.chess.core.GameMechanics.*;
 
 public class GameMessage {

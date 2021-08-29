@@ -28,9 +28,10 @@ public class _Piece extends _Masks {
     static long opponentQueen;
     static long opponentKing;
     static int pieceType;
+    static boolean onlyCapt;
 
     private static final int[][] MVVLVA = { // Most Valuable Victim - Least Valuable Aggressor
-          // pawn    knight  bishop  rook    queen   king
+            // pawn    knight  bishop  rook    queen   king
             {0xa006, 0xb006, 0xc006, 0xd006, 0xe006, 0x0000}, // pawn
             {0xa005, 0xb005, 0xc005, 0xd005, 0xe005, 0x0000}, // knight
             {0xa004, 0xb004, 0xc004, 0xd004, 0xe004, 0x0000}, // bishop
@@ -39,7 +40,8 @@ public class _Piece extends _Masks {
             {0xa001, 0xb001, 0xc001, 0xd001, 0xe001, 0x0000}  // king
     };
 
-    public static List<Move> getPseudoMoves(boolean white, long[] board) {
+    public static List<Move> getPseudoMoves(boolean white, long[] board, boolean onlyCapt) {
+        _Piece.onlyCapt = onlyCapt;
 
         long wPawn = board[0], wKnight = board[1], wBishop = board[2], wRook = board[3], wQueen = board[4], wKing = board[5];
         long bPawn = board[6], bKnight = board[7], bBishop = board[8], bRook = board[9], bQueen = board[10], bKing = board[11];
@@ -114,7 +116,14 @@ public class _Piece extends _Masks {
         long m = movement & - movement;
         while (m != 0) {
             int idx = numberOfTrailingZeros(m);
-            moves.add(new Move(utilIdx, idx, type, checkForCapture(idx)));
+            int capt = checkForCapture(idx);
+            if (onlyCapt) {
+                if (capt != 0) {
+                    moves.add(new Move(utilIdx, idx, type, capt));
+                }
+            } else {
+                moves.add(new Move(utilIdx, idx, type, capt));
+            }
             movement &= ~ m;
             m = movement & - movement;
         }
@@ -122,17 +131,17 @@ public class _Piece extends _Masks {
 
     static int checkForCapture(int idx) {
         long bit = 1L << idx;
-        if ((opponentPawn & bit) != 0){
+        if ((opponentPawn & bit) != 0) {
             return MVVLVA[pieceType][0];
-        } else if ((opponentKnight & bit) != 0){
+        } else if ((opponentKnight & bit) != 0) {
             return MVVLVA[pieceType][1];
-        } else if ((opponentBishop & bit) != 0){
+        } else if ((opponentBishop & bit) != 0) {
             return MVVLVA[pieceType][2];
-        } else if ((opponentRook & bit) != 0){
+        } else if ((opponentRook & bit) != 0) {
             return MVVLVA[pieceType][3];
-        } else if ((opponentQueen & bit) != 0){
+        } else if ((opponentQueen & bit) != 0) {
             return MVVLVA[pieceType][4];
-        } else if ((opponentKing & bit) != 0){
+        } else if ((opponentKing & bit) != 0) {
             return MVVLVA[pieceType][5];
         } else {
             return 0;

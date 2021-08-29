@@ -13,7 +13,7 @@ public class LegalMoves {
 
     public static List<Move> getLegalMoves(boolean white, long[] board) {
 
-        List<Move> moves = getPseudoMoves(white, board);
+        List<Move> moves = getPseudoMoves(white, board, false);
 
         moves.removeIf(pseudoMove -> isCheck(white, makeMove(board, pseudoMove)));
 

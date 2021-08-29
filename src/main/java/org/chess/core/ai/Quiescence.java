@@ -26,7 +26,7 @@ public class Quiescence extends _CommAI {
             alpha = score;
         }
 
-        List<Move> moves = getPseudoMoves(white, board);
+        List<Move> moves = getPseudoMoves(white, board, true);
         moves.sort(Comparator.comparing(Move::getRate).reversed());
 
         if (moves.size() == 0) {
@@ -34,17 +34,15 @@ public class Quiescence extends _CommAI {
         }
 
         for (Move move : moves) {
-            if (move.getRate() > 0) {
-                long[] updatedBoard = makeMove(board, move);
-                if (! isCheck(white, updatedBoard)) {
-                    if (isGameRunning()) {
-                        score = quiescenceMin(! white, updatedBoard, alpha, beta);
-                        if (score >= beta) {
-                            return beta;
-                        }
-                        if (score > alpha) {
-                            alpha = score;
-                        }
+            long[] updatedBoard = makeMove(board, move);
+            if (! isCheck(white, updatedBoard)) {
+                if (isGameRunning()) {
+                    score = quiescenceMin(! white, updatedBoard, alpha, beta);
+                    if (score >= beta) {
+                        return beta;
+                    }
+                    if (score > alpha) {
+                        alpha = score;
                     }
                 }
             }
@@ -64,7 +62,7 @@ public class Quiescence extends _CommAI {
             beta = score;
         }
 
-        List<Move> moves = getPseudoMoves(white, board);
+        List<Move> moves = getPseudoMoves(white, board, true);
         moves.sort(Comparator.comparing(Move::getRate).reversed());
 
         if (moves.size() == 0) {
@@ -72,16 +70,14 @@ public class Quiescence extends _CommAI {
         }
 
         for (Move move : moves) {
-            if (move.getRate() > 0) {
-                long[] updatedBoard = makeMove(board, move);
-                if (! isCheck(white, updatedBoard)) {
-                    score = quiescenceMax(! white, updatedBoard, alpha, beta);
-                    if (score <= alpha) {
-                        return alpha;
-                    }
-                    if (score < beta) {
-                        beta = score;
-                    }
+            long[] updatedBoard = makeMove(board, move);
+            if (! isCheck(white, updatedBoard)) {
+                score = quiescenceMax(! white, updatedBoard, alpha, beta);
+                if (score <= alpha) {
+                    return alpha;
+                }
+                if (score < beta) {
+                    beta = score;
                 }
             }
         }

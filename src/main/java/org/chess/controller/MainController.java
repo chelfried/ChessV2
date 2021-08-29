@@ -14,72 +14,72 @@ import static org.chess.core.Selection.makeSelection;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/api/")
 public class MainController {
 
-    @PostMapping("/reset")
+    @PostMapping("reset")
     public void resetGameBoard() {
         resetGame();
         refreshPage();
     }
 
-    @PostMapping("/white")
+    @PostMapping("white")
     public void startAsWhite() {
         setGameRunning(true);
         setPlayerAI(0);
         initiateChess();
     }
 
-    @PostMapping("/black")
+    @PostMapping("black")
     public void startAsBlack() {
         setGameRunning(true);
         setPlayerAI(1);
         initiateChess();
     }
 
-    @PostMapping("/{sel}")
+    @PostMapping("{sel}")
     public void selectPiece(@PathVariable int sel) {
         makeSelection(sel);
         refreshPage();
     }
 
-    @PostMapping("/promote/{piece}")
+    @PostMapping("promote/{piece}")
     public void promotePiece(@PathVariable int piece) {
         promote(piece);
         refreshPage();
     }
 
-    @GetMapping("/board")
+    @GetMapping("board")
     public static String[] getGamePieces() {
         return getPieces();
     }
 
-    @GetMapping("/gameStarted")
+    @GetMapping("gameStarted")
     static boolean checkIfGameStarted() {
         return isGameRunning();
     }
 
-    @GetMapping("/playingBlack")
+    @GetMapping("playingBlack")
     static boolean checkIfPlayingBlack() {
         return getPlayerAI() == 1;
     }
 
-    @GetMapping("/gameMessage")
+    @GetMapping("gameMessage")
     static String getGameMessage() {
         return JSONObject.quote(getMessage());
     }
 
-    @GetMapping("/fieldClass")
+    @GetMapping("fieldClass")
     static String[] getFieldClasses() {
         return calcFieldClass();
     }
 
-    @GetMapping("/whitePromoting")
+    @GetMapping("whitePromoting")
     static boolean checkForPromotionWhite() {
         return isHumanPromotingWhite();
     }
 
-    @GetMapping("/blackPromoting")
+    @GetMapping("blackPromoting")
     static boolean checkForPromotionBlack() {
         return isHumanPromotingBlack();
     }
